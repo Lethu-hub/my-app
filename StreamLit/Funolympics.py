@@ -64,10 +64,12 @@ if log_data is not None:
     # Get visualizations
     visualizations = get_visualizations(log_data, analysis_choice)
 
-    # Display all visualizations on one page
-    for fig, title in visualizations:
-        st.subheader(title)
-        st.pyplot(fig)
+    # Create columns for visualizations
+    cols = st.columns(4)
+    for idx, (fig, title) in enumerate(visualizations):
+        with cols[idx % 4]:
+            st.subheader(title)
+            st.pyplot(fig)
 
     # Add a footer
     st.text("Fun Olympics")
