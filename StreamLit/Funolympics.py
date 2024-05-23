@@ -1,5 +1,4 @@
 import streamlit as st
-import pandas as pd
 from user_behavior import analyze_user_behavior, visualize_user_behavior
 from marketing_insights import visualize_marketing_insights
 from prediction_models import visualize_prediction_models, predict_error, predict_status_code, predict_page_popularity, predict_load
@@ -62,27 +61,13 @@ if log_data is not None:
             st.error(f"Error generating visualizations: {e}")
             return []
 
-    # Create a section for each type of analysis
-    if analysis_choice == 'User Behavior':
-        st.header('User Behavior Analysis')
-    elif analysis_choice == 'Marketing Insights':
-        st.header('Marketing Insights')
-    elif analysis_choice == 'Prediction Models':
-        st.header('Prediction Models')
-
+    # Get visualizations
     visualizations = get_visualizations(log_data, analysis_choice)
 
-    # Display visualizations side by side
-    cols = st.columns(len(visualizations))
-    for col, (fig, title) in zip(cols, visualizations):
-        with col:
-            st.subheader(title)
-            st.pyplot(fig)
-
-    # Custom Visualizations Section
-    if analysis_choice == 'Custom Visualizations':
-        st.header('Create Your Own Visualizations')
-        # Your custom visualization code here
+    # Display all visualizations on one page
+    for fig, title in visualizations:
+        st.subheader(title)
+        st.pyplot(fig)
 
     # Add a footer
     st.text("Fun Olympics")
