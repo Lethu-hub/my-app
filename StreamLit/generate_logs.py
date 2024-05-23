@@ -1,44 +1,81 @@
-import random
-import pandas as pd
-from datetime import datetime, timedelta
-import os
+import streamlit as st
+from generate_logs import generate_logs
+from integrate_logs import integrate_csv_files
+from preprocess_logs import preprocess_logs, read_parse_log
+from user_behavior import analyze_user_behavior, visualize_user_behavior
+from marketing_insights import visualize_marketing_insights
+from prediction_models import visualize_prediction_models, predict_error, predict_status_code, predict_page_popularity, predict_load
 
-def generate_web_logs(num_logs):
-    status_codes = [200, 404, 500]
-    sports = [f'sport_{i}' for i in range(12)]
-    pages = sports + ['home']
-    ip_ranges = {
-        'USA': (3, 34),
-        'Germany': (13, 14),
-        'Japan': (13, 52),
-        'India': (13, 14),
-        'Australia': (13, 52)
-    }
-    countries = list(ip_ranges.keys())
+# Set page layout to wide
+st.set_page_config(layout="wide")
 
-    logs = []
-    for _ in range(num_logs):
-        timestamp = (datetime.now() - timedelta(minutes=random.randint(1, 60))).strftime('%Y-%m-%d %H:%M:%S')
-        country = random.choice(countries)
-        ip_range = ip_ranges[country]
-        ip_address = f'{random.randint(ip_range[0], ip_range[1])}.{random.randint(0, 255)}.{random.randint(0, 255)}.{random.randint(0, 255)}'
-        request_method = random.choice(['GET', 'POST'])
-        endpoint = f'/{random.choice(pages)}.html'
-        status_code = random.choice(status_codes)
-        logs.append([timestamp, ip_address, request_method, endpoint, status_code, country])
-    
-    df = pd.DataFrame(logs, columns=['Timestamp', 'IP Address', 'Request Method', 'Endpoint', 'Status Code', 'Country'])
-    return df
+# Title of the dashboard
+st.title('Fun Olympics Analytics Dashboard')
 
-def save_log_to_csv(df, directory):
-    timestamp = datetime.now().strftime('%Y%m%d%H%M%S%f')
-    filename = f'web_log_{timestamp}.csv'
-    file_path = os.path.join(directory, filename)
-    if not os.path.exists(directory):
-        os.makedirs(directory, exist_ok=True)
-    df.to_csv(file_path, index=False)
+# Generate, integrate, and preprocess logs
+generate_logs()
+integrate_csv_files()
+preprocess_logs()
 
-def generate_logs(output_directory='StreamLit/weblogs', logs_per_file=50, num_files=10):
-    for i in range(num_files):
-        log_data = generate_web_logs(logs_per_file)
-        save_log_to_csv(log_data, output_directory)
+# Load the preprocessed web logs data
+@st.cache_data
+def load_data(file_path):
+    try:
+        return read_parse_log(file_path)
+    except Exception as e:
+        st.error(f"Error loading data: {e}")
+        return None
+
+log_data = load_data('StreamLit/preprocessed_web_logs.csv')
+
+if log_data is not None:
+    def get_visualizations(log_data):
+        try:
+            visualizations = []
+
+            # User Behavior Analysis Visuals
+            user_behavior_analysis = analyze_user_behavior(log_data)
+            figs_user_behavior = visualize_user_behavior(user_behavior_analysis)
+            visualizations.extend(figs_user_behavior)
+
+            # Marketing Insights Visuals
+            figs_marketing = visualize_marketing_insights(log_data)
+            visualizations.extend(figs_marketing)
+
+            # Prediction Models Visuals
+            # Error Prediction
+            accuracy_error, y_test_error, y_pred_error = predict_error(log_data)
+            figs_error = visualize_prediction_models(y_test_error, y_pred_error, 'Error Prediction')
+            visualizations.extend(figs_error)
+
+            # Status Code Prediction
+            accuracy_status_code, y_test_status_code, y_pred_status_code = predict_status_code(log_data)
+            figs_status_code = visualize_prediction_models(y_test_status_code, y_pred_status_code, 'Status Code Prediction')
+            visualizations.extend(figs_status_code)
+
+            # Page Popularity Prediction
+            mse_page, y_test_page, y_pred_page = predict_page_popularity(log_data)
+            figs_page_popularity = visualize_prediction_models(y_test_page, y_pred_page, 'Page Popularity Prediction')
+            visualizations.extend(figs_page_popularity)
+
+            # Load Prediction
+            load_model_accuracy, y_test_load, load_predictions = predict_load(log_data)
+            figs_load = visualize_prediction_models(y_test_load, load_predictions, 'Load Prediction')
+            visualizations.extend(figs_load)
+
+            return visualizations
+        except Exception as e:
+            st.error(f"Error generating visualizations: {e}")
+            return []
+
+    visualizations = get_visualizations(log_data)
+
+    cols = st.columns(4)
+    for idx, (fig, title) in enumerate(visualizations):
+        with cols[idx % 4]:
+            st.subheader(title)
+            st.pyplot(fig)
+
+    st.text("Fun Olympics")
+else:
+    st.error("Failed to load data.")
