@@ -6,8 +6,8 @@ import os
 # Function to generate synthetic test data for web server logs
 def generate_web_logs(num_logs):
     # Lists for status codes and sports/pages
-    status_codes = [20 + i for i in range(1000)]
-    sports = [f'sport_{i}' for i in range(1000)]
+    status_codes = [200, 404, 500]  # Simplified status codes
+    sports = [f'sport_{i}' for i in range(12)]  # Generating 12 different sports
     pages = sports + ['home']
 
     # Country-specific IP address ranges (simplified examples)
@@ -58,7 +58,7 @@ def save_log_to_csv(df, directory):
 output_directory = 'weblogs'
 
 # Number of logs per file
-logs_per_file = 1000
+logs_per_file = 50  # Adjusted to generate 50 logs per file
 
 # Generate and save log files
 num_files = 10  # Adjust this to change the number of files generated each run
