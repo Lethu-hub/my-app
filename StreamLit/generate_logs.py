@@ -6,7 +6,7 @@ import os
 # Function to generate synthetic test data of web server logs
 def generate_web_logs(start_date, end_date, num_logs_per_file, num_files):
     # Create directory if it doesn't exist
-    output_directory = 'weblogs'
+    output_directory = 'StreamLit/weblogs'
     os.makedirs(output_directory, exist_ok=True)
 
     # List of sports
