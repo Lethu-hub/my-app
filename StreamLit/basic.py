@@ -83,8 +83,8 @@ def create_visualizations(analysis_results):
     return visualizations
 
 if __name__ == "__main__":
-    log_file_path = 'synthetic_web_logs.csv'
-    geoip_db_path = 'GeoLite2-Country.mmdb'
+    log_file_path = 'StreamLit/synthetic_web_logs.csv'
+    geoip_db_path = 'StreamLit/GeoLite2-Country.mmdb'
     log_data = read_parse_log(log_file_path)
     analysis_results = analyze_logs(log_data, geoip_db_path)
     visualizations = create_visualizations(analysis_results)
