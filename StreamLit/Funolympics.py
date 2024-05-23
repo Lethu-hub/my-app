@@ -1,6 +1,6 @@
 import streamlit as st
 from generate_logs import generate_logs
-from integration import integrate_csv_files
+from intergration import integrate_csv_files
 from preprocessing import preprocess_logs
 from basic import read_parse_log, get_basic_visualizations
 from user_behavior import analyze_user_behavior, visualize_user_behavior
