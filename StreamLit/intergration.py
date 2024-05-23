@@ -1,51 +1,68 @@
-import os
+import random
 import pandas as pd
+from datetime import datetime, timedelta
+import os
 
-def integrate_csv_files(input_directory, output_file):
-    # Initialize an empty list to hold the data from all files
-    all_logs = []
+# Function to generate synthetic test data of web server logs
+def generate_web_logs(start_date, end_date, num_logs_per_file, num_files):
+    # Create directory if it doesn't exist
+    output_directory = 'weblogs'
+    os.makedirs(output_directory, exist_ok=True)
 
-    # List all CSV files in the directory
-    csv_files = [file for file in os.listdir(input_directory) if file.endswith('.csv')]
+    # List of sports
+    sports = ['football', 'basketball', 'swimming', 'cycling', 'tennis', 'volleyball', 'gymnastics', 'boxing', 'surfing', 'athletics', 'hockey', 'golf', 'rugby', 'cricket', 'badminton']
+    num_sports = len(sports)
 
-    # Counter to track progress
-    log_count = 0
-    file_count = 0
-    total_files = len(csv_files)
+    # Error/status codes
+    status_codes = [200, 404, 500, 503, 504]
+    num_status_codes = len(status_codes)
 
-    try:
-        # Read each CSV file and append its content to the list
-        for csv_file in csv_files:
-            file_path = os.path.join(input_directory, csv_file)
-            log_df = pd.read_csv(file_path)
-            all_logs.append(log_df)
+    # Country-specific IP address ranges (simplified examples)
+    ip_ranges = {
+        'USA': (3, 34),       # AWS IP ranges for USA
+        'Germany': (13, 14),  # AWS IP ranges for Germany
+        'Japan': (13, 52),    # AWS IP ranges for Japan
+        'India': (13, 14),    # AWS IP ranges for India
+        'Australia': (13, 52), # AWS IP ranges for Australia
+        'Canada': (23, 24),   # AWS IP ranges for Canada
+        'France': (13, 14),   # AWS IP ranges for France
+        # Add more countries and their IP address ranges as needed
+    }
+    countries = list(ip_ranges.keys())
 
-            # Update log count and file count
-            log_count += len(log_df)
-            file_count += 1
+    # Generate random web server logs for each file
+    for file_idx in range(num_files):
+        logs = []
+        current_date = start_date
 
-            # Provide feedback every 500 logs
-            if log_count % 500 == 0:
-                print(f"Processed {log_count} logs so far...")
+        for _ in range(num_logs_per_file):
+            timestamp = current_date.strftime('%Y-%m-%d %H:%M:%S')
+            ip_address = f'{random.randint(0, 255)}.{random.randint(0, 255)}.{random.randint(0, 255)}.{random.randint(0, 255)}'
+            
+            # Assign country based on IP address range
+            country = None
+            for c, (start, end) in ip_ranges.items():
+                if start <= int(ip_address.split('.')[0]) <= end:
+                    country = c
+                    break
+            
+            request_method = random.choice(['GET', 'POST'])
+            endpoint = f'/{random.choice(sports)}.html'
+            status_code = random.choice(status_codes)
+            logs.append([timestamp, ip_address, country, request_method, endpoint, status_code])
 
-            # Provide feedback for every file
-            print(f"Processed file {file_count}/{total_files}")
+        # Create DataFrame
+        df = pd.DataFrame(logs, columns=['Timestamp', 'IP Address', 'Country', 'Request Method', 'Endpoint', 'Status Code'])
 
-        # Concatenate all DataFrames
-        all_logs_df = pd.concat(all_logs, ignore_index=True)
+        # Save to CSV
+        file_name = f'web_logs_{file_idx + 1}.csv'
+        file_path = os.path.join(output_directory, file_name)
+        df.to_csv(file_path, index=False)
+        print(f"Web logs saved to {file_path}")
 
-        # Save the combined DataFrame to a single CSV file
-        all_logs_df.to_csv(output_file, index=False)
-        print(f"Integration successful. Integrated web logs saved to {output_file}")
-
-    except Exception as e:
-        print(f"Integration failed: {e}")
-
-# Directory containing the individual log files
-input_directory = 'StreamLit/weblogs'
-
-# Output file path
-output_file = 'StreamLit/synthetic_web_logs.csv'
-
-# Integrate the CSV files
-integrate_csv_files(input_directory, output_file)
+# Example usage:
+start_date = datetime(2024, 5, 1)
+end_date = datetime(2024, 5, 2)
+num_logs_per_file = 100
+num_files = 10
+generate_web_logs(start_date, end_date, num_logs_per_file, num_files)
