@@ -20,7 +20,7 @@ end_date = datetime(2024, 5, 2)
 num_logs = 1000
 
 # Generate web logs
-generate_web_logs(start_date, end_date, num_logs_per_file, num_files)
+generate_web_logs(start_date, end_date, num_logs, num_files)
 
 # Directory containing the individual log files
 input_directory = 'StreamLit/weblogs'
