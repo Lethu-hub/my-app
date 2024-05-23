@@ -2,12 +2,16 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 import geoip2.database
+import time
 
 # Function to read and parse web server log files
 def read_parse_log(file_path):
+    start_time = time.time()
     df = pd.read_csv(file_path)
     df['Timestamp'] = pd.to_datetime(df['Timestamp'], errors='coerce')
     df['Hour'] = df['Timestamp'].dt.hour
+    end_time = time.time()
+    print(f"read_parse_log executed in {end_time - start_time:.2f} seconds")
     return df
 
 # Function to get country from IP address
@@ -20,13 +24,16 @@ def get_country_from_ip(ip, reader):
 
 # Function to analyze web server logs
 def analyze_logs(log_data, geoip_db_path):
+    start_time = time.time()
     reader = geoip2.database.Reader(geoip_db_path)
     log_data['Country'] = log_data['IP Address'].apply(lambda ip: get_country_from_ip(ip, reader))
     visits_by_country = log_data['Country'].value_counts()
-    visits_over_time = log_data['Timestamp'].dt.hour.value_counts().sort_index()
+    visits_over_time = log_data['Hour'].value_counts().sort_index()
     main_interests = log_data['Endpoint'].apply(lambda x: x.split('/')[1].replace('.html', '')).value_counts()
     main_interests_by_country = log_data.groupby('Country')['Endpoint'].apply(
         lambda x: x.apply(lambda y: y.split('/')[1].replace('.html', '')).value_counts().head(1)).reset_index()
+    end_time = time.time()
+    print(f"analyze_logs executed in {end_time - start_time:.2f} seconds")
     return {
         'visits_by_country': visits_by_country,
         'visits_over_time': visits_over_time,
@@ -36,6 +43,7 @@ def analyze_logs(log_data, geoip_db_path):
 
 # Function to create visualizations
 def create_visualizations(analysis_results):
+    start_time = time.time()
     visualizations = []
 
     fig1, ax1 = plt.subplots(figsize=(10, 6))
@@ -70,6 +78,8 @@ def create_visualizations(analysis_results):
     plt.xticks(rotation=90)
     visualizations.append((fig4, 'Main Interests by Country'))
     
+    end_time = time.time()
+    print(f"create_visualizations executed in {end_time - start_time:.2f} seconds")
     return visualizations
 
 if __name__ == "__main__":
