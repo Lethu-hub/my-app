@@ -32,7 +32,7 @@ def get_visualizations(log_data):
 
     # Basic Analysis Visuals
     start_time = time.time()
-    analysis_results = analyze_logs(log_data, 'StreamLit/GeoLite2-Country.mmdb')
+    analysis_results = analyze_logs(log_data)
     figs_basic = create_visualizations(analysis_results)
     visualizations.extend(figs_basic)
     st.write(f"Basic Analysis Visuals generated in {time.time() - start_time:.2f} seconds.")
@@ -60,36 +60,3 @@ def get_visualizations(log_data):
 
     # Status Code Prediction
     start_time = time.time()
-    accuracy_status_code, y_test_status_code, y_pred_status_code = predict_status_code(log_data)
-    figs_status_code = visualize_prediction_models(y_test_status_code, y_pred_status_code, 'Status Code Prediction')
-    visualizations.extend(figs_status_code)
-    st.write(f"Status Code Prediction Visuals generated in {time.time() - start_time:.2f} seconds.")
-
-    # Page Popularity Prediction
-    start_time = time.time()
-    mse_page, y_test_page, y_pred_page = predict_page_popularity(log_data)
-    figs_page_popularity = visualize_prediction_models(y_test_page, y_pred_page, 'Page Popularity Prediction')
-    visualizations.extend(figs_page_popularity)
-    st.write(f"Page Popularity Prediction Visuals generated in {time.time() - start_time:.2f} seconds.")
-
-    # Load Prediction
-    start_time = time.time()
-    load_model_accuracy, y_test_load, load_predictions = predict_load(log_data)
-    figs_load = visualize_prediction_models(y_test_load, load_predictions, 'Load Prediction')
-    visualizations.extend(figs_load)
-    st.write(f"Load Prediction Visuals generated in {time.time() - start_time:.2f} seconds.")
-
-    return visualizations
-
-# Get all visualizations
-visualizations = get_visualizations(log_data)
-
-# Display a subset of visualizations in a full-width layout
-st.header('All Visualizations')
-
-# Create a container for visualizations
-cols = st.columns(4)  # Create 4 columns for visualizations
-for idx, (fig, title) in enumerate(visualizations):
-    with cols[idx % 4]:  # Rotate through the columns
-        st.pyplot(fig)
-        st.write(title)
