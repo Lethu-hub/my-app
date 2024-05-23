@@ -5,14 +5,17 @@ def integrate_csv_files(input_directory, output_file):
     # Get list of CSV files in the input directory
     csv_files = [file for file in os.listdir(input_directory) if file.endswith('.csv')]
     
-    # Initialize an empty DataFrame to store the integrated data
-    integrated_data = pd.DataFrame()
+    # Initialize an empty list to store DataFrame objects
+    dataframes = []
     
-    # Iterate over each CSV file and append its data to the integrated DataFrame
+    # Iterate over each CSV file and read its data into a DataFrame
     for csv_file in csv_files:
         file_path = os.path.join(input_directory, csv_file)
         data = pd.read_csv(file_path)
-        integrated_data = integrated_data.append(data, ignore_index=True)
+        dataframes.append(data)
+    
+    # Concatenate all DataFrame objects in the list along the rows
+    integrated_data = pd.concat(dataframes, ignore_index=True)
     
     # Save the integrated data to a new CSV file
     integrated_data.to_csv(output_file, index=False)
