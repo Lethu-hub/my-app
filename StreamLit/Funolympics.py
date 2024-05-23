@@ -1,7 +1,7 @@
 import streamlit as st
 from datetime import datetime, timedelta
 from generate_logs import generate_web_logs
-from intergration import integrate_csv_files
+from integration import integrate_csv_files
 from preprocessing import read_parse_log
 from basic import get_basic_visualizations
 from user_behavior import analyze_user_behavior, visualize_user_behavior
@@ -20,11 +20,21 @@ end_date = datetime(2024, 5, 2)
 num_logs = 1000
 
 # Generate web logs
-web_logs = generate_web_logs(start_date, end_date, num_logs)
+generate_web_logs(start_date, end_date, num_logs)
 
-# Integrate and preprocess logs
-integrate_csv_files()
-read_parse_log()
+# Directory containing the individual log files
+input_directory = 'StreamLit/weblogs'
+
+# Output file path
+output_file = 'StreamLit/synthetic_web_logs.csv'
+
+# Integrate the CSV files
+integrate_csv_files(input_directory, output_file)
+
+# Preprocess logs
+input_file = 'StreamLit/synthetic_web_logs.csv'
+output_file = 'StreamLit/preprocessed_web_logs.csv'
+read_parse_log(input_file, output_file)
 
 # Load the preprocessed web logs data
 @st.cache_data
@@ -35,7 +45,7 @@ def load_data(file_path):
         st.error(f"Error loading data: {e}")
         return None
 
-log_data = load_data('StreamLit/preprocessed_web_logs.csv')
+log_data = load_data(output_file)
 
 if log_data is not None:
     def get_visualizations(log_data):
