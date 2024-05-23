@@ -22,51 +22,55 @@ def load_data(file_path):
 log_data = load_data('StreamLit/preprocessed_web_logs.csv')
 
 if log_data is not None:
-    # Sidebar selection for different analysis
-    analysis_choice = st.sidebar.selectbox('Select Analysis', ['User Behavior', 'Marketing Insights', 'Prediction Models', 'Custom Visualizations'])
-
     # Function to get visualizations based on analysis type
-    def get_visualizations(log_data, analysis_type):
+    def get_visualizations(log_data):
         try:
             visualizations = []
 
-            if analysis_type == 'User Behavior':
-                user_behavior_analysis = analyze_user_behavior(log_data)
-                figs = visualize_user_behavior(user_behavior_analysis)
-                visualizations.extend(figs)
+            # User Behavior Analysis Visuals
+            user_behavior_analysis = analyze_user_behavior(log_data)
+            figs_user_behavior = visualize_user_behavior(user_behavior_analysis)
+            visualizations.extend(figs_user_behavior)
 
-            elif analysis_type == 'Marketing Insights':
-                figs = visualize_marketing_insights(log_data)
-                visualizations.extend(figs)
+            # Marketing Insights Visuals
+            figs_marketing = visualize_marketing_insights(log_data)
+            visualizations.extend(figs_marketing)
 
-            elif analysis_type == 'Prediction Models':
-                accuracy_error, y_test_error, y_pred_error = predict_error(log_data)
-                figs_error = visualize_prediction_models(y_test_error, y_pred_error, 'Error Prediction')
-                visualizations.extend(figs_error)
+            # Prediction Models Visuals
+            # Error Prediction
+            accuracy_error, y_test_error, y_pred_error = predict_error(log_data)
+            figs_error = visualize_prediction_models(y_test_error, y_pred_error, 'Error Prediction')
+            visualizations.extend(figs_error)
 
-                accuracy_status_code, y_test_status_code, y_pred_status_code = predict_status_code(log_data)
-                figs_status_code = visualize_prediction_models(y_test_status_code, y_pred_status_code, 'Status Code Prediction')
-                visualizations.extend(figs_status_code)
+            # Status Code Prediction
+            accuracy_status_code, y_test_status_code, y_pred_status_code = predict_status_code(log_data)
+            figs_status_code = visualize_prediction_models(y_test_status_code, y_pred_status_code, 'Status Code Prediction')
+            visualizations.extend(figs_status_code)
 
-                mse_page, y_test_page, y_pred_page = predict_page_popularity(log_data)
-                figs_page_popularity = visualize_prediction_models(y_test_page, y_pred_page, 'Page Popularity Prediction')
-                visualizations.extend(figs_page_popularity)
+            # Page Popularity Prediction
+            mse_page, y_test_page, y_pred_page = predict_page_popularity(log_data)
+            figs_page_popularity = visualize_prediction_models(y_test_page, y_pred_page, 'Page Popularity Prediction')
+            visualizations.extend(figs_page_popularity)
 
-                load_model_accuracy, y_test_load, load_predictions = predict_load(log_data)
-                figs_load = visualize_prediction_models(y_test_load, load_predictions, 'Load Prediction')
-                visualizations.extend(figs_load)
+            # Load Prediction
+            load_model_accuracy, y_test_load, load_predictions = predict_load(log_data)
+            figs_load = visualize_prediction_models(y_test_load, load_predictions, 'Load Prediction')
+            visualizations.extend(figs_load)
 
             return visualizations
         except Exception as e:
             st.error(f"Error generating visualizations: {e}")
             return []
 
-    # Get visualizations
-    visualizations = get_visualizations(log_data, analysis_choice)
+    # Get all visualizations
+    visualizations = get_visualizations(log_data)
 
-    # Display visualizations without separating sections
-    for fig, title in visualizations:
-        st.pyplot(fig)
+    # Display visualizations in 4 columns
+    cols = st.columns(4)
+    for idx, (fig, title) in enumerate(visualizations):
+        with cols[idx % 4]:
+            st.subheader(title)
+            st.pyplot(fig)
 
     # Add a footer
     st.text("Fun Olympics")
