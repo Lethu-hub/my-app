@@ -24,7 +24,7 @@ def load_data(file_path):
     return data
 
 # Load the data
-log_data = load_data('preprocessed_web_logs.csv')
+log_data = load_data('StreamLit/preprocessed_web_logs.csv')
 
 # Function to get visualizations based on analysis type
 def get_visualizations(log_data):
