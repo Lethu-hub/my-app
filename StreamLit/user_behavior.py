@@ -97,7 +97,7 @@ def visualize_user_behavior(user_behavior_analysis):
 
 # Example usage
 if __name__ == "_main_":
-    log_data = pd.read_csv('preprocessed_web_logs.csv')
+    log_data = pd.read_csv('StreamLit/preprocessed_web_logs.csv')
     log_data['Hour'] = pd.to_datetime(log_data['Timestamp']).dt.hour  # Ensure 'Hour' column is created
     user_behavior_analysis = analyze_user_behavior(log_data)
     visualize_user_behavior(user_behavior_analysis)
