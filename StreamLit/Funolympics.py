@@ -5,7 +5,7 @@ import seaborn as sns
 from user_behavior import analyze_user_behavior, visualize_user_behavior
 from marketing_insights import visualize_marketing_insights
 from prediction_models import visualize_prediction_models, predict_error, predict_status_code, predict_page_popularity, predict_load
-from basic import read_parse_log, analyze_logs, create_visualizations
+from basic import read_parse_log, analyze_logs, create_visualizations  # Import from basic.py
 import time
 
 # Set page layout to wide
@@ -29,6 +29,13 @@ log_data = load_data('StreamLit/preprocessed_web_logs.csv')
 # Function to get visualizations based on analysis type
 def get_visualizations(log_data):
     visualizations = []
+
+    # Basic Analysis Visuals
+    start_time = time.time()
+    analysis_results = analyze_logs(log_data, 'GeoLite2-Country.mmdb')
+    figs_basic = create_visualizations(analysis_results)
+    visualizations.extend(figs_basic)
+    st.write(f"Basic Analysis Visuals generated in {time.time() - start_time:.2f} seconds.")
 
     # User Behavior Analysis Visuals
     start_time = time.time()
@@ -82,50 +89,7 @@ st.header('All Visualizations')
 
 # Create a container for visualizations
 cols = st.columns(4)  # Create 4 columns for visualizations
-
-# Display only the first few visualizations
-for i, (fig, title) in enumerate(visualizations[:8]):  # Limiting to first 8 for debugging
-    with cols[i % 4]:  # Use modulo to distribute visualizations across columns
-        st.subheader(title)
+for idx, (fig, title) in enumerate(visualizations):
+    with cols[idx % 4]:  # Rotate through the columns
         st.pyplot(fig)
-
-# Allow user to load more visualizations
-if st.button('Load More Visualizations'):
-    for i, (fig, title) in enumerate(visualizations[8:]):  # Load the remaining visualizations
-        with cols[i % 4]:
-            st.subheader(title)
-            st.pyplot(fig)
-
-# Custom Visualizations Section
-st.header('Create Your Own Visualizations')
-
-# Allow users to select columns for X and Y axes
-x_col = st.selectbox('Select X-axis column', log_data.columns)
-y_col = st.selectbox('Select Y-axis column', log_data.columns)
-
-# Allow users to select the type of chart
-chart_type = st.selectbox('Select Chart Type', ['Line Chart', 'Bar Chart', 'Scatter Plot', 'Histogram'])
-
-# Generate custom visualization based on user inputs
-if st.button('Generate Chart'):
-    fig, ax = plt.subplots(figsize=(10, 6))  # Adjust size as needed
-    
-    if chart_type == 'Line Chart':
-        sns.lineplot(data=log_data, x=x_col, y=y_col, ax=ax)
-    elif chart_type == 'Bar Chart':
-        sns.barplot(data=log_data, x=x_col, y=y_col, ax=ax)
-    elif chart_type == 'Scatter Plot':
-        sns.scatterplot(data=log_data, x=x_col, y=y_col, ax=ax)
-    elif chart_type == 'Histogram':
-        sns.histplot(data=log_data, x=x_col, bins=30, ax=ax)
-
-    st.pyplot(fig)
-    
-    # Option to save custom visualization
-    if st.button('Save Chart to Dashboard'):
-        visualizations.append((fig, f'Custom {chart_type}'))
-
-st.markdown('---')
-
-# Add a footer
-st.text("Fun Olympics")
+        st.write(title)
