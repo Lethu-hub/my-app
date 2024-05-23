@@ -17,6 +17,16 @@ def generate_web_logs(start_date, end_date, num_logs_per_file, num_files):
     status_codes = [200, 404, 500, 503, 504]
     num_status_codes = len(status_codes)
 
+    # Country-specific IP address ranges (simplified examples)
+    ip_ranges = {
+        'USA': (3, 34),       # AWS IP ranges for USA
+        'Germany': (13, 14),  # AWS IP ranges for Germany
+        'Japan': (13, 52),    # AWS IP ranges for Japan
+        'India': (13, 14),    # AWS IP ranges for India
+        'Australia': (13, 52) # AWS IP ranges for Australia
+    }
+    countries = list(ip_ranges.keys())
+
     # Generate random web server logs for each file
     for file_idx in range(num_files):
         logs = []
