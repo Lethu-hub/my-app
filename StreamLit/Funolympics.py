@@ -2,13 +2,20 @@ import streamlit as st
 from user_behavior import analyze_user_behavior, visualize_user_behavior
 from marketing_insights import visualize_marketing_insights
 from prediction_models import visualize_prediction_models, predict_error, predict_status_code, predict_page_popularity, predict_load
-from basic import read_parse_log
+from generate_logs import generate_logs
+from integrate_logs import integrate_csv_files
+from preprocess_logs import preprocess_logs, read_parse_log
 
 # Set page layout to wide
 st.set_page_config(layout="wide")
 
 # Title of the dashboard
 st.title('Fun Olympics Analytics Dashboard')
+
+# Generate, integrate, and preprocess logs
+generate_logs()
+integrate_csv_files()
+preprocess_logs()
 
 # Load the preprocessed web logs data
 @st.cache_data
@@ -22,7 +29,6 @@ def load_data(file_path):
 log_data = load_data('StreamLit/preprocessed_web_logs.csv')
 
 if log_data is not None:
-    # Function to get visualizations based on analysis type
     def get_visualizations(log_data):
         try:
             visualizations = []
@@ -62,17 +68,14 @@ if log_data is not None:
             st.error(f"Error generating visualizations: {e}")
             return []
 
-    # Get all visualizations
     visualizations = get_visualizations(log_data)
 
-    # Display visualizations in 4 columns
     cols = st.columns(4)
     for idx, (fig, title) in enumerate(visualizations):
         with cols[idx % 4]:
             st.subheader(title)
             st.pyplot(fig)
 
-    # Add a footer
     st.text("Fun Olympics")
 else:
     st.error("Failed to load data.")
