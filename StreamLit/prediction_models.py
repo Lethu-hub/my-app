@@ -6,7 +6,7 @@ from sklearn.ensemble import RandomForestRegressor, RandomForestClassifier, Grad
 from sklearn.metrics import mean_squared_error, accuracy_score, confusion_matrix
 
 # Load the original CSV file
-log_data = pd.read_csv('preprocessed_web_logs.csv')
+log_data = pd.read_csv('StreamLit/preprocessed_web_logs.csv')
 
 # Convert 'Date' and 'Time' columns to datetime objects
 log_data['Date'] = pd.to_datetime(log_data['Date'])
