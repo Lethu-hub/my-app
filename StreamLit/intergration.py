@@ -42,10 +42,10 @@ def integrate_csv_files(input_directory, output_file):
         print(f"Integration failed: {e}")
 
 # Directory containing the individual log files
-input_directory = 'weblogs'
+input_directory = 'StreamLit/weblogs'
 
 # Output file path
-output_file = 'synthetic_web_logs.csv'
+output_file = 'StreamLit/synthetic_web_logs.csv'
 
 # Integrate the CSV files
 integrate_csv_files(input_directory, output_file)
