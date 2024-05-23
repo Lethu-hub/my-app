@@ -14,7 +14,7 @@ st.set_page_config(layout="wide")
 st.title('Fun Olympics Analytics Dashboard')
 
 # Generate, integrate, and preprocess logs
-generate_web_logs()
+generate_web_logs(start_date, end_date, num_logs)
 integrate_csv_files()
 read_parse_log()
 
