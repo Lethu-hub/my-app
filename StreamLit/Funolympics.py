@@ -1,7 +1,8 @@
 import streamlit as st
 from generate_logs import generate_logs
-from intergration import integrate_csv_files
-from preprocessing import preprocess_logs, read_parse_log
+from integrate_logs import integrate_csv_files
+from preprocess_logs import preprocess_logs
+from basic import read_parse_log
 from user_behavior import analyze_user_behavior, visualize_user_behavior
 from marketing_insights import visualize_marketing_insights
 from prediction_models import visualize_prediction_models, predict_error, predict_status_code, predict_page_popularity, predict_load
