@@ -46,3 +46,4 @@ end_date = datetime(2024, 5, 2)
 num_logs_per_file = 100
 num_files = 10
 generate_web_logs(start_date, end_date, num_logs_per_file, num_files)
+
