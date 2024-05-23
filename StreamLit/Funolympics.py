@@ -32,7 +32,7 @@ def get_visualizations(log_data):
 
     # Basic Analysis Visuals
     start_time = time.time()
-    analysis_results = analyze_logs(log_data, 'GeoLite2-Country.mmdb')
+    analysis_results = analyze_logs(log_data, 'StreamLit/GeoLite2-Country.mmdb')
     figs_basic = create_visualizations(analysis_results)
     visualizations.extend(figs_basic)
     st.write(f"Basic Analysis Visuals generated in {time.time() - start_time:.2f} seconds.")
