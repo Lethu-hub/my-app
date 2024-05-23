@@ -74,7 +74,7 @@ def visualize_marketing_insights(log_data):
 
 # Example usage:
 if __name__ == "__main__":
-    log_data = read_parse_log('preprocessed_web_logs.csv')
+    log_data = read_parse_log('StreamLit/preprocessed_web_logs.csv')
     visualizations = visualize_marketing_insights(log_data)
     for fig, title in visualizations:
         fig.show()
