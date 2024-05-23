@@ -13,7 +13,7 @@ st.set_page_config(layout="wide")
 st.title('Fun Olympics Analytics Dashboard')
 
 # Load the preprocessed web logs data
-@st.cache
+@st.cache_data
 def load_data(file_path):
     try:
         return read_parse_log(file_path)
