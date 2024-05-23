@@ -29,8 +29,8 @@ def read_parse_log(file_name):
     return df
 
 # Example usage:
-input_file = 'synthetic_web_logs.csv'
-output_file = 'preprocessed_web_logs.csv'
+input_file = 'StreamLit/synthetic_web_logs.csv'
+output_file = 'StreamLit/preprocessed_web_logs.csv'
 
 # Read and parse web server log file
 log_data = read_parse_log(input_file)
