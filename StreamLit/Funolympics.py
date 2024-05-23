@@ -32,9 +32,8 @@ output_file = 'StreamLit/synthetic_web_logs.csv'
 integrate_csv_files(input_directory, output_file)
 
 # Preprocess logs
-input_file = 'StreamLit/synthetic_web_logs.csv'
 output_file = 'StreamLit/preprocessed_web_logs.csv'
-read_parse_log(input_file, output_file)
+read_parse_log(output_file)
 
 # Load the preprocessed web logs data
 @st.cache_data
