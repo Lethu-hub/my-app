@@ -1,5 +1,5 @@
 import streamlit as st
-from datetime import datetime, timedelta
+from datetime import datetime
 from generate_logs import generate_web_logs
 from intergration import integrate_csv_files
 from preprocessing import read_parse_log
@@ -14,10 +14,11 @@ st.set_page_config(layout="wide")
 # Title of the dashboard
 st.title('Fun Olympics Analytics Dashboard')
 
-# Define start date, end date, and number of logs
+# Define start date, end date, number of logs per file, and number of files
 start_date = datetime(2024, 5, 1)
 end_date = datetime(2024, 5, 2)
-num_logs = 1000
+num_logs_per_file = 100
+num_files = 10
 
 # Generate web logs
 generate_web_logs(start_date, end_date, num_logs_per_file, num_files)
