@@ -1,8 +1,8 @@
 import streamlit as st
 from generate_logs import generate_logs
-from intergration import integrate_csv_files
+from integration import integrate_csv_files
 from preprocessing import preprocess_logs
-from basic import read_parse_log
+from basic import read_parse_log, get_basic_visualizations
 from user_behavior import analyze_user_behavior, visualize_user_behavior
 from marketing_insights import visualize_marketing_insights
 from prediction_models import visualize_prediction_models, predict_error, predict_status_code, predict_page_popularity, predict_load
@@ -33,6 +33,10 @@ if log_data is not None:
     def get_visualizations(log_data):
         try:
             visualizations = []
+
+            # Basic Visuals
+            basic_visuals = get_basic_visualizations(log_data)
+            visualizations.extend(basic_visuals)
 
             # User Behavior Analysis Visuals
             user_behavior_analysis = analyze_user_behavior(log_data)
