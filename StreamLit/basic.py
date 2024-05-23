@@ -1,3 +1,5 @@
+# basic.py
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -14,7 +16,7 @@ def read_parse_log(file_path):
     return df
 
 # Function to analyze web server logs
-def analyze_logs(log_data):
+def analyze_logs(log_data, geolite_db_path=None):
     start_time = time.time()
     visits_by_country = log_data['Country'].value_counts()
     visits_over_time = log_data['Hour'].value_counts().sort_index()
