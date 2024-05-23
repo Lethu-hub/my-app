@@ -17,3 +17,4 @@ def read_parse_log(file_name):
 def preprocess_logs(input_file='StreamLit/synthetic_web_logs.csv', output_file='StreamLit/preprocessed_web_logs.csv'):
     log_data = read_parse_log(input_file)
     log_data.to_csv(output_file, index=False)
+    print(f"Preprocessed data saved to {output_file}")
