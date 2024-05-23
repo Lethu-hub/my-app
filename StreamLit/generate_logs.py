@@ -6,7 +6,7 @@ import os
 # Function to generate synthetic test data of web server logs
 def generate_web_logs(start_date, end_date, num_logs_per_file, num_files):
     # Create directory if it doesn't exist
-    output_directory = 'StreamLit/weblogs'
+    output_directory = 'weblogs'
     os.makedirs(output_directory, exist_ok=True)
 
     # List of sports
@@ -23,7 +23,10 @@ def generate_web_logs(start_date, end_date, num_logs_per_file, num_files):
         'Germany': (13, 14),  # AWS IP ranges for Germany
         'Japan': (13, 52),    # AWS IP ranges for Japan
         'India': (13, 14),    # AWS IP ranges for India
-        'Australia': (13, 52) # AWS IP ranges for Australia
+        'Australia': (13, 52), # AWS IP ranges for Australia
+        'Canada': (23, 24),   # AWS IP ranges for Canada
+        'France': (13, 14),   # AWS IP ranges for France
+        # Add more countries and their IP address ranges as needed
     }
     countries = list(ip_ranges.keys())
 
@@ -35,14 +38,21 @@ def generate_web_logs(start_date, end_date, num_logs_per_file, num_files):
         for _ in range(num_logs_per_file):
             timestamp = current_date.strftime('%Y-%m-%d %H:%M:%S')
             ip_address = f'{random.randint(0, 255)}.{random.randint(0, 255)}.{random.randint(0, 255)}.{random.randint(0, 255)}'
+            
+            # Assign country based on IP address range
+            country = None
+            for c, (start, end) in ip_ranges.items():
+                if start <= int(ip_address.split('.')[0]) <= end:
+                    country = c
+                    break
+            
             request_method = random.choice(['GET', 'POST'])
             endpoint = f'/{random.choice(sports)}.html'
             status_code = random.choice(status_codes)
-            logs.append([timestamp, ip_address, request_method, endpoint, status_code])
-            current_date += timedelta(minutes=random.randint(1, 60))  # Increment timestamp randomly
+            logs.append([timestamp, ip_address, country, request_method, endpoint, status_code])
 
         # Create DataFrame
-        df = pd.DataFrame(logs, columns=['Timestamp', 'IP Address', 'Request Method', 'Endpoint', 'Status Code'])
+        df = pd.DataFrame(logs, columns=['Timestamp', 'IP Address', 'Country', 'Request Method', 'Endpoint', 'Status Code'])
 
         # Save to CSV
         file_name = f'web_logs_{file_idx + 1}.csv'
@@ -56,4 +66,3 @@ end_date = datetime(2024, 5, 2)
 num_logs_per_file = 100
 num_files = 10
 generate_web_logs(start_date, end_date, num_logs_per_file, num_files)
-
