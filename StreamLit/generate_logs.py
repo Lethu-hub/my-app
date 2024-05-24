@@ -54,8 +54,9 @@ def generate_web_logs(start_date, end_date, num_logs_per_file, num_files):
         # Create DataFrame
         df = pd.DataFrame(logs, columns=['Timestamp', 'IP Address', 'Country', 'Request Method', 'Endpoint', 'Status Code'])
 
-        # Save to CSV
-        file_name = f'web_logs_{file_idx + 1}.csv'
+        # Generate a unique filename
+        unique_suffix = datetime.now().strftime('%Y%m%d%H%M%S') + '_' + str(random.randint(1000, 9999))
+        file_name = f'web_logs_{unique_suffix}_{file_idx + 1}.csv'
         file_path = os.path.join(output_directory, file_name)
         df.to_csv(file_path, index=False)
         print(f"Web logs saved to {file_path}")
