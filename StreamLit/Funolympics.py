@@ -1,12 +1,14 @@
 import streamlit as st
 from datetime import datetime
 from generate_logs import generate_web_logs
-from intergration import integrate_csv_files
+from integration import integrate_csv_files
 from preprocessing import read_parse_log
 from basic import get_basic_visualizations
 from user_behavior import analyze_user_behavior, visualize_user_behavior
 from marketing_insights import visualize_marketing_insights
 from prediction_models import visualize_prediction_models, predict_error, predict_status_code, predict_page_popularity, predict_load
+
+import matplotlib.pyplot as plt
 
 # Set page layout to wide
 st.set_page_config(layout="wide")
@@ -118,21 +120,30 @@ if log_data is not None:
         columns = log_data.columns.tolist()
         selected_columns = st.multiselect("Choose columns", columns)
 
-        viz_type = st.selectbox("Select visualization type", ["Bar Chart", "Line Chart", "Scatter Plot"])
+        viz_type = st.selectbox("Select visualization type", ["Bar Chart", "Line Chart", "Scatter Plot", "Pie Chart", "Histogram"])
 
         submit_button = st.form_submit_button(label='Create Visual')
 
     if submit_button and selected_columns:
+        fig, ax = plt.subplots()
         if viz_type == "Bar Chart":
-            fig = log_data[selected_columns].plot(kind='bar').get_figure()
+            log_data[selected_columns].plot(kind='bar', ax=ax)
         elif viz_type == "Line Chart":
-            fig = log_data[selected_columns].plot(kind='line').get_figure()
+            log_data[selected_columns].plot(kind='line', ax=ax)
         elif viz_type == "Scatter Plot":
             if len(selected_columns) == 2:
-                fig = log_data.plot(kind='scatter', x=selected_columns[0], y=selected_columns[1]).get_figure()
+                log_data.plot(kind='scatter', x=selected_columns[0], y=selected_columns[1], ax=ax)
             else:
                 st.error("Scatter plot requires exactly 2 columns.")
                 fig = None
+        elif viz_type == "Pie Chart":
+            if len(selected_columns) == 1:
+                log_data[selected_columns[0]].value_counts().plot(kind='pie', ax=ax, autopct='%1.1f%%')
+            else:
+                st.error("Pie chart requires exactly 1 column.")
+                fig = None
+        elif viz_type == "Histogram":
+            log_data[selected_columns].plot(kind='hist', ax=ax, bins=30)
         else:
             fig = None
 
