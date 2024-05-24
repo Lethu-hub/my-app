@@ -19,15 +19,23 @@ def generate_web_logs(start_date, end_date, num_logs_per_file, num_files):
 
     # Country-specific IP address ranges (simplified examples)
     ip_ranges = {
-        'USA': (3, 34),       # AWS IP ranges for USA
-        'Germany': (13, 14),  # AWS IP ranges for Germany
-        'Japan': (13, 52),    # AWS IP ranges for Japan
-        'India': (13, 14),    # AWS IP ranges for India
-        'Australia': (13, 52), # AWS IP ranges for Australia
-        'Canada': (23, 24),   # AWS IP ranges for Canada
-        'France': (13, 14),   # AWS IP ranges for France
-        # Add more countries and their IP address ranges as needed
-    }
+    'USA': (3, 34),         # AWS IP ranges for USA
+    'Germany': (13, 14),    # AWS IP ranges for Germany
+    'Japan': (13, 52),      # AWS IP ranges for Japan
+    'India': (13, 14),      # AWS IP ranges for India
+    'Australia': (13, 52),  # AWS IP ranges for Australia
+    'Canada': (23, 24),     # AWS IP ranges for Canada
+    'France': (13, 14),     # AWS IP ranges for France
+    'Italy': (13, 14),      # AWS IP ranges for Italy
+    'Brazil': (13, 14),     # AWS IP ranges for Brazil
+    'Russia': (13, 52),     # AWS IP ranges for Russia
+    'China': (13, 52),      # AWS IP ranges for China
+    'Spain': (13, 14),      # AWS IP ranges for Spain
+    'Mexico': (13, 52),     # AWS IP ranges for Mexico
+    'Netherlands': (3, 34), # AWS IP ranges for Netherlands
+    'South Africa': (13, 52), # AWS IP ranges for South Africa
+    'South Korea': (13, 52)  # AWS IP ranges for South Korea
+}
     countries = list(ip_ranges.keys())
 
     # Generate random web server logs for each file
