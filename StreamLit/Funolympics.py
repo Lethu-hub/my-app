@@ -160,14 +160,19 @@ if log_data is not None:
                 st.session_state['saved_visuals'] = st.session_state.get('saved_visuals', [])
                 st.session_state['saved_visuals'].append((fig, f"{viz_type} of {' and '.join(selected_columns)}"))
 
-    # Display saved visuals
-    if 'saved_visuals' in st.session_state:
-        st.header("Saved Visuals")
-        saved_cols = st.columns(4)
-        for idx, (fig, title) in enumerate(st.session_state['saved_visuals']):
-            with saved_cols[idx % 4]:
-                st.subheader(title)
-                st.pyplot(fig)
+    # Save to Dashboard Button
+if save_button:
+    st.session_state['saved_visuals'] = st.session_state.get('saved_visuals', [])
+    st.session_state['saved_visuals'].append((fig, f"{viz_type} of {' and '.join(selected_columns)}"))
+    st.success("Visualization saved to Dashboard!")
+
+# Display saved visuals under Custom Visuals
+if 'saved_visuals' in st.session_state:
+    st.header("Custom Visuals")
+    for idx, (fig, title) in enumerate(st.session_state['saved_visuals']):
+        st.subheader(f"{idx + 1}. {title}")
+        st.pyplot(fig)
+
 
 else:
     st.error("Failed to load data.")
