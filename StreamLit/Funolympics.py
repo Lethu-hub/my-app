@@ -119,16 +119,16 @@ if log_data is not None:
 
     st.text("Fun Olympics")
 
-    # Add a form for users to generate and save new visualizations
-    st.header("Create Visuals")
-    with st.form(key='create_visuals_form'):
-        st.write("Select columns to create visualization:")
-        columns = log_data.columns.tolist()
-        selected_columns = st.multiselect("Choose columns", columns)
+ # Add a form for users to generate and save new visualizations
+st.header("Create Visuals")
+with st.form(key='create_visuals_form'):
+    st.write("Select columns to create visualization:")
+    columns = log_data.columns.tolist()
+    selected_columns = st.multiselect("Choose columns", columns)
 
-        viz_type = st.selectbox("Select visualization type", ["Bar Chart", "Line Chart", "Scatter Plot", "Pie Chart", "Histogram"])
+    viz_type = st.selectbox("Select visualization type", ["Bar Chart", "Line Chart", "Scatter Plot", "Pie Chart", "Histogram"])
 
-        submit_button = st.form_submit_button(label='Create Visual')
+    submit_button = st.form_submit_button(label='Create Visual')
 
     if submit_button and selected_columns:
         fig, ax = plt.subplots()
@@ -159,12 +159,7 @@ if log_data is not None:
             if save_button:
                 st.session_state['saved_visuals'] = st.session_state.get('saved_visuals', [])
                 st.session_state['saved_visuals'].append((fig, f"{viz_type} of {' and '.join(selected_columns)}"))
-
-    # Save to Dashboard Button
-if save_button:
-    st.session_state['saved_visuals'] = st.session_state.get('saved_visuals', [])
-    st.session_state['saved_visuals'].append((fig, f"{viz_type} of {' and '.join(selected_columns)}"))
-    st.success("Visualization saved to Dashboard!")
+                st.success("Visualization saved to Dashboard!")
 
 # Display saved visuals under Custom Visuals
 if 'saved_visuals' in st.session_state:
@@ -172,8 +167,6 @@ if 'saved_visuals' in st.session_state:
     for idx, (fig, title) in enumerate(st.session_state['saved_visuals']):
         st.subheader(f"{idx + 1}. {title}")
         st.pyplot(fig)
-
-
 else:
     st.error("Failed to load data.")
 
