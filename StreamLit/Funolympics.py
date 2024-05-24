@@ -1,7 +1,7 @@
 import streamlit as st
 from datetime import datetime
 from generate_logs import generate_web_logs
-from intergration import integrate_csv_files  # Assuming this is the correct import
+from intergration import integrate_csv_files
 from preprocessing import read_parse_log
 from basic import get_basic_visualizations
 from user_behavior import analyze_user_behavior, visualize_user_behavior
@@ -114,61 +114,41 @@ if log_data is not None:
     # Add a form for users to generate and save new visualizations
     st.header("Create Visuals")
     with st.form(key='create_visuals_form'):
-        st.write("Select visualizations to create:")
-        basic_viz = st.checkbox("Basic Visualizations")
-        user_behavior_viz = st.checkbox("User Behavior Insights")
-        marketing_viz = st.checkbox("Marketing Insights")
-        forecasting_viz = st.checkbox("Forecasting Insights")
+        st.write("Select columns to create visualization:")
+        columns = log_data.columns.tolist()
+        selected_columns = st.multiselect("Choose columns", columns)
 
-        save_visuals = st.checkbox("Save Visualizations")
-        submit_button = st.form_submit_button(label='Create Visuals')
+        viz_type = st.selectbox("Select visualization type", ["Bar Chart", "Line Chart", "Scatter Plot"])
 
-    if submit_button:
-        new_visuals = []
-        
-        if basic_viz:
-            basic_visuals = get_basic_visualizations(log_data)
-            new_visuals.extend(basic_visuals)
+        submit_button = st.form_submit_button(label='Create Visual')
 
-        if user_behavior_viz:
-            user_behavior_analysis = analyze_user_behavior(log_data)
-            figs_user_behavior = visualize_user_behavior(user_behavior_analysis)
-            new_visuals.extend(figs_user_behavior)
+    if submit_button and selected_columns:
+        if viz_type == "Bar Chart":
+            fig = log_data[selected_columns].plot(kind='bar').get_figure()
+        elif viz_type == "Line Chart":
+            fig = log_data[selected_columns].plot(kind='line').get_figure()
+        elif viz_type == "Scatter Plot":
+            if len(selected_columns) == 2:
+                fig = log_data.plot(kind='scatter', x=selected_columns[0], y=selected_columns[1]).get_figure()
+            else:
+                st.error("Scatter plot requires exactly 2 columns.")
+                fig = None
+        else:
+            fig = None
 
-        if marketing_viz:
-            figs_marketing = visualize_marketing_insights(log_data)
-            new_visuals.extend(figs_marketing)
+        if fig:
+            st.pyplot(fig)
+            save_button = st.button('Save to Dashboard')
+            if save_button:
+                st.session_state['saved_visuals'] = st.session_state.get('saved_visuals', [])
+                st.session_state['saved_visuals'].append((fig, f"{viz_type} of {' and '.join(selected_columns)}"))
 
-        if forecasting_viz:
-            accuracy_error, y_test_error, y_pred_error = predict_error(log_data)
-            figs_error = visualize_prediction_models(y_test_error, y_pred_error, 'Error Prediction')
-            new_visuals.extend(figs_error)
-
-            accuracy_status_code, y_test_status_code, y_pred_status_code = predict_status_code(log_data)
-            figs_status_code = visualize_prediction_models(y_test_status_code, y_pred_status_code, 'Status Code Prediction')
-            new_visuals.extend(figs_status_code)
-
-            mse_page, y_test_page, y_pred_page = predict_page_popularity(log_data)
-            figs_page_popularity = visualize_prediction_models(y_test_page, y_pred_page, 'Page Popularity Prediction')
-            new_visuals.extend(figs_page_popularity)
-
-            load_model_accuracy, y_test_load, load_predictions = predict_load(log_data)
-            figs_load = visualize_prediction_models(y_test_load, load_predictions, 'Load Prediction')
-            new_visuals.extend(figs_load)
-
-        if save_visuals:
-            # Save new visualizations to a directory (for example, 'saved_visuals')
-            os.makedirs('StreamLit/saved_visuals', exist_ok=True)
-            for idx, (fig, title) in enumerate(new_visuals):
-                fig_path = f'StreamLit/saved_visuals/{title}_{idx}.png'
-                fig.savefig(fig_path)
-                st.write(f'Saved {title} to {fig_path}')
-
-        # Display the new visualizations
-        st.header("Generated Visuals")
-        new_cols = st.columns(4)
-        for idx, (fig, title) in enumerate(new_visuals):
-            with new_cols[idx % 4]:
+    # Display saved visuals
+    if 'saved_visuals' in st.session_state:
+        st.header("Saved Visuals")
+        saved_cols = st.columns(4)
+        for idx, (fig, title) in enumerate(st.session_state['saved_visuals']):
+            with saved_cols[idx % 4]:
                 st.subheader(title)
                 st.pyplot(fig)
 
