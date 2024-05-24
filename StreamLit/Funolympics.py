@@ -1,7 +1,7 @@
 import streamlit as st
 from datetime import datetime
 from generate_logs import generate_web_logs
-from integration import integrate_csv_files  # Assuming this is the correct import
+from intergration import integrate_csv_files  # Assuming this is the correct import
 from preprocessing import read_parse_log
 from basic import get_basic_visualizations
 from user_behavior import analyze_user_behavior, visualize_user_behavior
