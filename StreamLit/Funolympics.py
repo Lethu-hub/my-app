@@ -130,36 +130,39 @@ with st.form(key='create_visuals_form'):
 
     submit_button = st.form_submit_button(label='Create Visual')
 
-    if submit_button and selected_columns:
-        fig, ax = plt.subplots()
-        if viz_type == "Bar Chart":
-            log_data[selected_columns].plot(kind='bar', ax=ax)
-        elif viz_type == "Line Chart":
-            log_data[selected_columns].plot(kind='line', ax=ax)
-        elif viz_type == "Scatter Plot":
-            if len(selected_columns) == 2:
-                log_data.plot(kind='scatter', x=selected_columns[0], y=selected_columns[1], ax=ax)
-            else:
-                st.error("Scatter plot requires exactly 2 columns.")
-                fig = None
-        elif viz_type == "Pie Chart":
-            if len(selected_columns) == 1:
-                log_data[selected_columns[0]].value_counts().plot(kind='pie', ax=ax, autopct='%1.1f%%')
-            else:
-                st.error("Pie chart requires exactly 1 column.")
-                fig = None
-        elif viz_type == "Histogram":
-            log_data[selected_columns].plot(kind='hist', ax=ax, bins=30)
+# Handle the form submission separately
+if submit_button and selected_columns:
+    fig, ax = plt.subplots()
+    if viz_type == "Bar Chart":
+        log_data[selected_columns].plot(kind='bar', ax=ax)
+    elif viz_type == "Line Chart":
+        log_data[selected_columns].plot(kind='line', ax=ax)
+    elif viz_type == "Scatter Plot":
+        if len(selected_columns) == 2:
+            log_data.plot(kind='scatter', x=selected_columns[0], y=selected_columns[1], ax=ax)
         else:
+            st.error("Scatter plot requires exactly 2 columns.")
             fig = None
+    elif viz_type == "Pie Chart":
+        if len(selected_columns) == 1:
+            log_data[selected_columns[0]].value_counts().plot(kind='pie', ax=ax, autopct='%1.1f%%')
+        else:
+            st.error("Pie chart requires exactly 1 column.")
+            fig = None
+    elif viz_type == "Histogram":
+        log_data[selected_columns].plot(kind='hist', ax=ax, bins=30)
+    else:
+        fig = None
 
-        if fig:
-            st.pyplot(fig)
-            save_button = st.button('Save to Dashboard')
-            if save_button:
-                st.session_state['saved_visuals'] = st.session_state.get('saved_visuals', [])
-                st.session_state['saved_visuals'].append((fig, f"{viz_type} of {' and '.join(selected_columns)}"))
-                st.success("Visualization saved to Dashboard!")
+    if fig:
+        st.pyplot(fig)
+        save_button = st.button('Save to Dashboard')
+
+# Handle the save button separately
+if 'save_button' in locals() and save_button:
+    st.session_state['saved_visuals'] = st.session_state.get('saved_visuals', [])
+    st.session_state['saved_visuals'].append((fig, f"{viz_type} of {' and '.join(selected_columns)}"))
+    st.success("Visualization saved to Dashboard!")
 
 # Display saved visuals under Custom Visuals
 if 'saved_visuals' in st.session_state:
@@ -172,3 +175,4 @@ else:
 
 # Footer
 st.text("© Fun Olympics")
+
