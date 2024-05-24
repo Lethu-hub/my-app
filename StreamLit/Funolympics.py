@@ -119,7 +119,7 @@ if log_data is not None:
 
     st.text("Fun Olympics")
 
- # Add a form for users to generate and save new visualizations
+# Add a form for users to generate and save new visualizations
 st.header("Create Visuals")
 with st.form(key='create_visuals_form'):
     st.write("Select columns to create visualization:")
