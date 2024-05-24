@@ -1,7 +1,7 @@
 import streamlit as st
 from datetime import datetime
 from generate_logs import generate_web_logs
-from intergration import integrate_csv_files
+from integration import integrate_csv_files
 from preprocessing import read_parse_log
 from basic import get_basic_visualizations
 from user_behavior import analyze_user_behavior, visualize_user_behavior
@@ -23,7 +23,9 @@ num_logs_per_file = 100
 num_files = 10
 
 # Generate web logs
+st.write("Generating web logs...")
 generate_web_logs(start_date, end_date, num_logs_per_file, num_files)
+st.write("Web logs generated successfully.")
 
 # Directory containing the individual log files
 input_directory = 'StreamLit/weblogs'
@@ -32,11 +34,15 @@ input_directory = 'StreamLit/weblogs'
 output_file = 'StreamLit/synthetic_web_logs.csv'
 
 # Integrate the CSV files
+st.write("Integrating CSV files...")
 integrate_csv_files(input_directory, output_file)
+st.write("CSV files integrated successfully.")
 
 # Preprocess logs
 output_file = 'StreamLit/preprocessed_web_logs.csv'
+st.write("Preprocessing logs...")
 read_parse_log(output_file)
+st.write("Logs preprocessed successfully.")
 
 # Load the preprocessed web logs data
 @st.cache_data
@@ -165,3 +171,6 @@ if log_data is not None:
 
 else:
     st.error("Failed to load data.")
+
+# Footer
+st.text("© Fun Olympics")
