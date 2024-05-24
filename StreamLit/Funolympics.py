@@ -1,7 +1,7 @@
 import streamlit as st
 from datetime import datetime
 from generate_logs import generate_web_logs
-from intergration import integrate_csv_files
+from integration import integrate_csv_files  # Assuming this is the correct import
 from preprocessing import read_parse_log
 from basic import get_basic_visualizations
 from user_behavior import analyze_user_behavior, visualize_user_behavior
@@ -50,54 +50,64 @@ log_data = load_data(output_file)
 if log_data is not None:
     def get_visualizations(log_data):
         try:
-            visualizations = []
+            required_visuals = []
+            user_behavior_insights = []
+            marketing_insights = []
+            forecasting_insights = []
 
             # Basic Visuals
             basic_visuals = get_basic_visualizations(log_data)
-            visualizations.extend(basic_visuals)
+            required_visuals.extend(basic_visuals)
 
             # User Behavior Analysis Visuals
             user_behavior_analysis = analyze_user_behavior(log_data)
             figs_user_behavior = visualize_user_behavior(user_behavior_analysis)
-            visualizations.extend(figs_user_behavior)
+            user_behavior_insights.extend(figs_user_behavior)
 
             # Marketing Insights Visuals
             figs_marketing = visualize_marketing_insights(log_data)
-            visualizations.extend(figs_marketing)
+            marketing_insights.extend(figs_marketing)
 
             # Prediction Models Visuals
             # Error Prediction
             accuracy_error, y_test_error, y_pred_error = predict_error(log_data)
             figs_error = visualize_prediction_models(y_test_error, y_pred_error, 'Error Prediction')
-            visualizations.extend(figs_error)
+            forecasting_insights.extend(figs_error)
 
             # Status Code Prediction
             accuracy_status_code, y_test_status_code, y_pred_status_code = predict_status_code(log_data)
             figs_status_code = visualize_prediction_models(y_test_status_code, y_pred_status_code, 'Status Code Prediction')
-            visualizations.extend(figs_status_code)
+            forecasting_insights.extend(figs_status_code)
 
             # Page Popularity Prediction
             mse_page, y_test_page, y_pred_page = predict_page_popularity(log_data)
             figs_page_popularity = visualize_prediction_models(y_test_page, y_pred_page, 'Page Popularity Prediction')
-            visualizations.extend(figs_page_popularity)
+            forecasting_insights.extend(figs_page_popularity)
 
             # Load Prediction
             load_model_accuracy, y_test_load, load_predictions = predict_load(log_data)
             figs_load = visualize_prediction_models(y_test_load, load_predictions, 'Load Prediction')
-            visualizations.extend(figs_load)
+            forecasting_insights.extend(figs_load)
 
-            return visualizations
+            return {
+                'Required Visuals': required_visuals,
+                'User Behavior Insights': user_behavior_insights,
+                'Marketing Insights': marketing_insights,
+                'Forecasting Insights': forecasting_insights
+            }
         except Exception as e:
             st.error(f"Error generating visualizations: {e}")
-            return []
+            return {}
 
     visualizations = get_visualizations(log_data)
 
-    cols = st.columns(4)
-    for idx, (fig, title) in enumerate(visualizations):
-        with cols[idx % 4]:
-            st.subheader(title)
-            st.pyplot(fig)
+    for section, visuals in visualizations.items():
+        st.header(section)
+        cols = st.columns(4)
+        for idx, (fig, title) in enumerate(visuals):
+            with cols[idx % 4]:
+                st.subheader(title)
+                st.pyplot(fig)
 
     st.text("Fun Olympics")
 else:
