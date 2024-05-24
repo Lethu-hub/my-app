@@ -36,7 +36,7 @@ def generate_web_logs(start_date, end_date, num_logs_per_file, num_files):
         current_date = start_date
 
         for _ in range(num_logs_per_file):
-            timestamp = current_date.strftime('%Y-%m-%d_%H-%M-%S')
+            timestamp = current_date.strftime('%Y-%m-%d %H:%M:%S')
             ip_address = f'{random.randint(0, 255)}.{random.randint(0, 255)}.{random.randint(0, 255)}.{random.randint(0, 255)}'
             
             # Assign country based on IP address range
@@ -54,9 +54,8 @@ def generate_web_logs(start_date, end_date, num_logs_per_file, num_files):
         # Create DataFrame
         df = pd.DataFrame(logs, columns=['Timestamp', 'IP Address', 'Country', 'Request Method', 'Endpoint', 'Status Code'])
 
-        # Save to CSV with unique filename based on timestamp
-        timestamp_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-        file_name = f'web_logs_{timestamp_str}_{file_idx + 1}.csv'
+        # Save to CSV
+        file_name = f'web_logs_{file_idx + 1}.csv'
         file_path = os.path.join(output_directory, file_name)
         df.to_csv(file_path, index=False)
         print(f"Web logs saved to {file_path}")
